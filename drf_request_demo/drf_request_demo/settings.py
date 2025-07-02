@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'demoapi',
     'store',
     'snippets',
-    'oauth2_provider'
+    'oauth2_provider',
+    'blog',
 ]
 
 MIDDLEWARE = [
@@ -128,15 +129,25 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK={
-    'DEFAULT_AUTHENTICATION_CLASSES':
+    # 'DEFAULT_AUTHENTICATION_CLASSES':
+        # [
+        #     'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+            # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        #     'rest_framework.authentication.SessionAuthentication',
+        #     'rest_framework.authentication.BasicAuthentication',
+        #     'rest_framework.authentication.TokenAuthentication',
+        # ],
+        'DEFAULT_PERMISSION_CLASSES':
         [
-            'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
-            'rest_framework_simplejwt.authentication.JWTAuthentication',
-            'rest_framework.authentication.SessionAuthentication',
-            'rest_framework.authentication.BasicAuthentication',
-            'rest_framework.authentication.TokenAuthentication',
+            'blog.permissions.BlocklistPermissions',
+            'rest_framework.permissions.IsAuthenticated',
         ],
-        'DEFAULT_PERMISSION_CLASSES':[
-            'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
         ],
+        'DEFAULT_THROTTLE_RATES': {
+            'anon': '5/minute',     # Limit for unauthenticated users
+            'user': '10/minute',    # Limit for authenticated users
+        }
 }

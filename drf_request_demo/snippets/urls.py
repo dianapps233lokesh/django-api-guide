@@ -21,6 +21,9 @@ urlpatterns += [
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 ]
 
-# 
+urlpatterns+=[
+    path('public/',views.PublicView.as_view()),
+    path('private/',views.PrivateView.as_view()),
+]
 
 # 

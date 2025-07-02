@@ -3,8 +3,9 @@ from .serializers import SnippetSerializer
 from rest_framework.authentication import SessionAuthentication,BasicAuthentication,TokenAuthentication
 from .models import Snippet
 from rest_framework import generics,permissions
-# from rest_framework.permissions import IsAuthenticatedOrReadOnly
-
+from rest_framework.permissions import AllowAny,IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 
 class SnippetList(generics.ListCreateAPIView):
@@ -29,3 +30,15 @@ class SnippetDetail(generics.RetrieveUpdateDestroyAPIView):
             from rest_framework.exceptions import PermissionDenied
             raise PermissionDenied("you must be owner to update")
         serializer.save()
+
+class PublicView(APIView):
+    permission_classes=[AllowAny]
+
+    def get(self,request):
+        return Response({"message":"This method is for the unauthenticated users"})
+
+class PrivateView(APIView):
+    permission_classes=[IsAuthenticated]
+
+    def get(self, request):
+        return Response({"message":f"private endpoint for {request.user}. authenticated user"})
